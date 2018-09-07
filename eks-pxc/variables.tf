@@ -1,4 +1,4 @@
-variable "cloud_name" {
+variable "cluster-name" {
   description = "Uniq cloud name"
   default     = "eks-pxc"
 }

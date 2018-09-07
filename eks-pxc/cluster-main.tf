@@ -1,5 +1,5 @@
 resource "aws_eks_cluster" "eks" {
-  name     = "${var.cloud_name}"
+  name     = "${var.cluster-name}"
   role_arn = "${aws_iam_role.cluster.arn}"
 
   vpc_config {

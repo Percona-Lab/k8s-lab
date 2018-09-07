@@ -12,7 +12,7 @@ data "aws_iam_policy_document" "worker-assume" {
 
 # create role for worker nodes
 resource "aws_iam_role" "worker" {
-  name               = "${var.cloud_name}-worker"
+  name               = "${var.cluster-name}-worker"
   path               = "/"
   assume_role_policy = "${data.aws_iam_policy_document.worker-assume.json}"
 }
@@ -33,6 +33,6 @@ resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerRegistryReadOnly" {
 }
 
 resource "aws_iam_instance_profile" "worker" {
-  name = "${var.cloud_name}-worker"
+  name = "${var.cluster-name}-worker"
   role = "${aws_iam_role.worker.name}"
 }

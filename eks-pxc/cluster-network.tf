@@ -1,29 +1,33 @@
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
-  name                 = "${var.cloud_name}"
+  name                 = "${var.cluster-name}"
   cidr                 = "192.168.192.0/22"
   azs                  = ["${var.aws_region}b", "${var.aws_region}c", "${var.aws_region}d"]
   public_subnets       = ["192.168.192.0/24", "192.168.193.0/24", "192.168.194.0/24"]
   enable_dns_hostnames = true
 
-  tags = {
-    Name                                      = "${var.cloud_name}"
-    iit-billing-tag                           = "${var.cloud_name}"
-    "kubernetes.io/cluster/${var.cloud_name}" = "shared"
-  }
+  tags = "${
+      map(
+        "Name", "${var.cluster-name}-cluster",
+        "iit-billing-tag", "${var.cluster-name}",
+        "kubernetes.io/cluster/${var.cluster-name}", "shared",
+      )
+    }"
 }
 
 resource "aws_security_group" "cluster" {
-  name        = "${var.cloud_name}-cluster"
+  name        = "${var.cluster-name}-cluster"
   description = "EKS Cluster communication"
   vpc_id      = "${module.vpc.vpc_id}"
 
-  tags {
-    Name                                      = "${var.cloud_name}"
-    iit-billing-tag                           = "${var.cloud_name}"
-    "kubernetes.io/cluster/${var.cloud_name}" = "shared"
-  }
+  tags = "${
+      map(
+        "Name", "${var.cluster-name}-cluster",
+        "iit-billing-tag", "${var.cluster-name}",
+        "kubernetes.io/cluster/${var.cluster-name}", "shared",
+      )
+    }"
 }
 
 resource "aws_security_group_rule" "cluster-egress-worker-api" {

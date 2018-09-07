@@ -2,12 +2,12 @@ locals {
   worker-userdata = <<USERDATA
 #!/bin/bash -xe
 
-/etc/eks/bootstrap.sh ${var.cloud_name}
+/etc/eks/bootstrap.sh ${var.cluster-name}
 USERDATA
 }
 
 resource "aws_launch_configuration" "worker" {
-  name_prefix          = "${var.cloud_name}-worker"
+  name_prefix          = "${var.cluster-name}-worker"
   iam_instance_profile = "${aws_iam_instance_profile.worker.name}"
   image_id             = "${data.aws_ami.worker.id}"
   instance_type        = "t2.medium"
@@ -21,7 +21,7 @@ resource "aws_launch_configuration" "worker" {
 }
 
 resource "aws_autoscaling_group" "worker" {
-  name                 = "${var.cloud_name}-worker"
+  name                 = "${var.cluster-name}-worker"
   desired_capacity     = 3
   launch_configuration = "${aws_launch_configuration.worker.id}"
   max_size             = 3
@@ -30,18 +30,18 @@ resource "aws_autoscaling_group" "worker" {
 
   tag {
     key                 = "Name"
-    value               = "${var.cloud_name}"
+    value               = "${var.cluster-name}"
     propagate_at_launch = true
   }
 
   tag {
     key                 = "iit-billing-tag"
-    value               = "${var.cloud_name}"
+    value               = "${var.cluster-name}"
     propagate_at_launch = true
   }
 
   tag {
-    key                 = "kubernetes.io/cluster/${var.cloud_name}"
+    key                 = "kubernetes.io/cluster/${var.cluster-name}"
     value               = "owned"
     propagate_at_launch = true
   }

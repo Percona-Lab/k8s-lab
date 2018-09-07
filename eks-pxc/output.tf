@@ -23,7 +23,7 @@ users:
       args:
         - "token"
         - "-i"
-        - "${var.cloud_name}"
+        - "${var.cluster-name}"
 KUBECONFIG
 
   aws-auth-cm = <<CONFIGMAPAWSAUTH

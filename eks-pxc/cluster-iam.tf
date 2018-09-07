@@ -12,7 +12,7 @@ data "aws_iam_policy_document" "cluster-assume" {
 
 # create role for cluster instance
 resource "aws_iam_role" "cluster" {
-  name               = "${var.cloud_name}-cluster"
+  name               = "${var.cluster-name}-cluster"
   path               = "/"
   assume_role_policy = "${data.aws_iam_policy_document.cluster-assume.json}"
 }

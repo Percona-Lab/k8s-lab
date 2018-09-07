@@ -1,5 +1,5 @@
 resource "aws_security_group" "worker" {
-  name        = "${var.cloud_name}-worker"
+  name        = "${var.cluster-name}-worker"
   description = "EKS worker communication"
   vpc_id      = "${module.vpc.vpc_id}"
 
@@ -10,11 +10,13 @@ resource "aws_security_group" "worker" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags {
-    Name                                      = "${var.cloud_name}"
-    iit-billing-tag                           = "${var.cloud_name}"
-    "kubernetes.io/cluster/${var.cloud_name}" = "owned"
-  }
+  tags = "${
+      map(
+        "Name", "${var.cluster-name}-worker",
+        "iit-billing-tag", "${var.cluster-name}",
+        "kubernetes.io/cluster/${var.cluster-name}", "shared",
+      )
+    }"
 }
 
 resource "aws_security_group_rule" "worker-ingress-self" {
