@@ -2,47 +2,84 @@ locals {
   worker-userdata = <<USERDATA
 #!/bin/bash -xe
 
-/etc/eks/bootstrap.sh ${var.cluster-name}
+bash -x /etc/eks/bootstrap.sh ${var.cluster-name} --kubelet-extra-args --node-labels=lifecycle=Ec2Spot
 USERDATA
 }
 
-resource "aws_launch_configuration" "worker" {
-  name_prefix          = "${var.cluster-name}-worker"
-  iam_instance_profile = "${aws_iam_instance_profile.worker.name}"
-  image_id             = "${data.aws_ami.worker.id}"
-  instance_type        = "t2.medium"
-  security_groups      = ["${aws_security_group.worker.id}"]
-  user_data_base64     = "${base64encode(local.worker-userdata)}"
-  key_name             = "${var.key_name}"
+resource "aws_spot_fleet_request" "worker" {
+  allocation_strategy                 = "diversified"
+  excess_capacity_termination_policy  = "Default"
+  iam_fleet_role                      = "${aws_iam_role.worker-fleet.arn}"
+  replace_unhealthy_instances         = "true"
+  spot_price                          = "0.02"
+  target_capacity                     = 3
+  terminate_instances_with_expiration = "false"
+  fleet_type                          = "maintain"
+  valid_until                         = "2099-09-01T00:00:00Z"
 
-  lifecycle {
-    create_before_destroy = true
+  launch_specification {
+    instance_type = "t2.medium"
+    ebs_optimized = "false"
+
+    ami                         = "${data.aws_ami.worker.id}"
+    subnet_id                   = "${element(module.vpc.public_subnets, 0)}"
+    vpc_security_group_ids      = ["${aws_security_group.worker.id}"]
+    iam_instance_profile_arn    = "${aws_iam_instance_profile.worker.arn}"
+    key_name                    = "${var.key_name}"
+    monitoring                  = "false"
+    user_data                   = "${base64encode(local.worker-userdata)}"
+    associate_public_ip_address = "true"
+
+    tags = "${
+      map(
+        "Name", "${var.cluster-name}-worker",
+        "iit-billing-tag", "${var.cluster-name}",
+        "kubernetes.io/cluster/${var.cluster-name}", "shared",
+      )
+    }"
   }
-}
 
-resource "aws_autoscaling_group" "worker" {
-  name                 = "${var.cluster-name}-worker"
-  desired_capacity     = 3
-  launch_configuration = "${aws_launch_configuration.worker.id}"
-  max_size             = 3
-  min_size             = 2
-  vpc_zone_identifier  = ["${module.vpc.public_subnets}"]
+  launch_specification {
+    instance_type = "t2.medium"
+    ebs_optimized = "false"
 
-  tag {
-    key                 = "Name"
-    value               = "${var.cluster-name}"
-    propagate_at_launch = true
+    ami                         = "${data.aws_ami.worker.id}"
+    subnet_id                   = "${element(module.vpc.public_subnets, 1)}"
+    vpc_security_group_ids      = ["${aws_security_group.worker.id}"]
+    iam_instance_profile_arn    = "${aws_iam_instance_profile.worker.arn}"
+    key_name                    = "${var.key_name}"
+    monitoring                  = "false"
+    user_data                   = "${base64encode(local.worker-userdata)}"
+    associate_public_ip_address = "true"
+
+    tags = "${
+      map(
+        "Name", "${var.cluster-name}-worker",
+        "iit-billing-tag", "${var.cluster-name}",
+        "kubernetes.io/cluster/${var.cluster-name}", "shared",
+      )
+    }"
   }
 
-  tag {
-    key                 = "iit-billing-tag"
-    value               = "${var.cluster-name}"
-    propagate_at_launch = true
-  }
+  launch_specification {
+    instance_type = "t2.medium"
+    ebs_optimized = "false"
 
-  tag {
-    key                 = "kubernetes.io/cluster/${var.cluster-name}"
-    value               = "owned"
-    propagate_at_launch = true
+    ami                         = "${data.aws_ami.worker.id}"
+    subnet_id                   = "${element(module.vpc.public_subnets, 2)}"
+    vpc_security_group_ids      = ["${aws_security_group.worker.id}"]
+    iam_instance_profile_arn    = "${aws_iam_instance_profile.worker.arn}"
+    key_name                    = "${var.key_name}"
+    monitoring                  = "false"
+    user_data                   = "${base64encode(local.worker-userdata)}"
+    associate_public_ip_address = "true"
+
+    tags = "${
+      map(
+        "Name", "${var.cluster-name}-worker",
+        "iit-billing-tag", "${var.cluster-name}",
+        "kubernetes.io/cluster/${var.cluster-name}", "shared",
+      )
+    }"
   }
 }
