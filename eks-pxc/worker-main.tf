@@ -2,18 +2,21 @@ locals {
   worker-userdata = <<USERDATA
 #!/bin/bash -xe
 
-/etc/eks/bootstrap.sh ${var.cluster-name}
+bash -x /etc/eks/bootstrap.sh ${var.cluster-name}
 USERDATA
 }
 
 resource "aws_launch_configuration" "worker" {
-  name_prefix          = "${var.cluster-name}-worker"
-  iam_instance_profile = "${aws_iam_instance_profile.worker.name}"
+  instance_type = "t2.medium"
+  ebs_optimized = false
+
+  name_prefix          = "${var.cluster-name}-worker-"
   image_id             = "${data.aws_ami.worker.id}"
-  instance_type        = "t2.medium"
+  iam_instance_profile = "${aws_iam_instance_profile.worker.name}"
+  key_name             = "${var.key_name}"
   security_groups      = ["${aws_security_group.worker.id}"]
   user_data_base64     = "${base64encode(local.worker-userdata)}"
-  key_name             = "${var.key_name}"
+  spot_price           = 0.02
 
   lifecycle {
     create_before_destroy = true
