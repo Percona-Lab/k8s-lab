@@ -7,13 +7,11 @@ module "vpc" {
   public_subnets       = ["192.168.192.0/24", "192.168.193.0/24", "192.168.194.0/24"]
   enable_dns_hostnames = true
 
-  tags = "${
-      map(
-        "Name", "${var.cluster-name}-cluster",
-        "iit-billing-tag", "${var.cluster-name}",
-        "kubernetes.io/cluster/${var.cluster-name}", "shared",
-      )
-    }"
+  tags = "${map(
+    "Name", "${var.cluster-name}",
+    "iit-billing-tag", "${var.cluster-name}",
+    "kubernetes.io/cluster/${var.cluster-name}", "shared",
+  )}"
 }
 
 resource "aws_security_group" "cluster" {
@@ -21,13 +19,11 @@ resource "aws_security_group" "cluster" {
   description = "EKS Cluster communication"
   vpc_id      = "${module.vpc.vpc_id}"
 
-  tags = "${
-      map(
-        "Name", "${var.cluster-name}-cluster",
-        "iit-billing-tag", "${var.cluster-name}",
-        "kubernetes.io/cluster/${var.cluster-name}", "shared",
-      )
-    }"
+  tags = "${map(
+    "Name", "${var.cluster-name}-cluster",
+    "iit-billing-tag", "${var.cluster-name}",
+    "kubernetes.io/cluster/${var.cluster-name}", "shared",
+  )}"
 }
 
 resource "aws_security_group_rule" "cluster-egress-worker-api" {

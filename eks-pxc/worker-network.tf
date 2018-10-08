@@ -10,13 +10,11 @@ resource "aws_security_group" "worker" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = "${
-      map(
-        "Name", "${var.cluster-name}-worker",
-        "iit-billing-tag", "${var.cluster-name}",
-        "kubernetes.io/cluster/${var.cluster-name}", "shared",
-      )
-    }"
+  tags = "${map(
+    "Name", "${var.cluster-name}-worker",
+    "iit-billing-tag", "${var.cluster-name}",
+    "kubernetes.io/cluster/${var.cluster-name}", "owned",
+  )}"
 }
 
 resource "aws_security_group_rule" "worker-ingress-self" {
