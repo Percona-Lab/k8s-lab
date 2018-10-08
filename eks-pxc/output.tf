@@ -5,17 +5,17 @@ clusters:
 - cluster:
     server: ${aws_eks_cluster.eks.endpoint}
     certificate-authority-data: ${aws_eks_cluster.eks.certificate_authority.0.data}
-  name: kubernetes
+  name: eks-cluster
 contexts:
 - context:
-    cluster: kubernetes
-    user: aws
-  name: aws
-current-context: aws
+    cluster: eks-cluster
+    user: eks-user
+  name: eks
+current-context: eks
 kind: Config
 preferences: {}
 users:
-- name: aws
+- name: eks-user
   user:
     exec:
       apiVersion: client.authentication.k8s.io/v1alpha1
