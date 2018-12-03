@@ -23,7 +23,7 @@ module "k8s" {
   k8s_name        = "eu-psmdb"
   k8s_description = "psmdb EU k8s test cluster"
 
-  k8s_min_master_version = "1.10.6-gke.1"
+  k8s_min_master_version = "1.11.2-gke.18"
   k8s_master_username    = "${var.k8s_master_username}"
   k8s_master_password    = "${var.k8s_master_password}"
   k8s_main_zone          = "europe-west1-b"
