@@ -22,7 +22,7 @@ small tip: if you run MySQL on EC2 instance to make backups inside one region â€
 | xbcloud      | default settings       |  10% |   96Mb |  25MiB/s | -81% |
 | xbcloud      | 10Mb block, 16 threads |  60% |  185Mb | 134MiB/s |  +3% |
 
-# AWS (from US to S3)
+# AWS (from US to EU)
 from AWS EC2 in us-east-1 to AWS S3 in eu-central-1.
 It have no sense to make backup to the same region with ec2 instance.
 
@@ -36,7 +36,7 @@ It have no sense to make backup to the same region with ec2 instance.
 | xbcloud      | default settings       |  4% |   96Mb |  10MiB/s |  -84% |
 | xbcloud      | 10Mb block, 16 threads | 59% |  417Mb | 123MiB/s | +101% |
 
-# Google Cloud
+# Google Cloud (from US to EU)
 intresting fact Google Cloud Storage support both native protocol and S3 protocol.
 from Compute Engine instance in us-east1 to Cloud Storage europe-west3.
 
