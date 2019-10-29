@@ -1,6 +1,7 @@
 //  Setup the core provider information.
 provider "aws" {
   region  = "${var.region}"
+  version = "< 2.0"
 }
 
 //  Create the OpenShift cluster using our module.
