@@ -76,3 +76,6 @@ systemctl restart docker
 # Allow the ec2-user to sudo without a tty, which is required when we run post
 # install scripts on the server.
 echo Defaults:ec2-user \!requiretty >> /etc/sudoers
+
+# Reboot server after the installation
+shutdown -r now

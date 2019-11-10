@@ -4,6 +4,16 @@ provider "aws" {
   version = "< 2.0"
 }
 
+// Save state file in S3
+terraform {
+ backend "s3" {
+   encrypt = true
+   region  = "us-west-2"
+   bucket  = "terraform-state-storage-openshift"
+   key = "terraform.tfstate"
+ }
+}
+
 //  Create the OpenShift cluster using our module.
 module "openshift" {
   source          = "./modules/openshift"

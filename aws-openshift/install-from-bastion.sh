@@ -3,6 +3,9 @@ set -x
 # Elevate priviledges, retaining the environment.
 sudo -E su
 
+# Start docker
+/usr/bin/systemctl restart docker
+
 # Install dev tools.
 yum install -y "@Development Tools" python2-pip openssl-devel python-devel gcc libffi-devel
 
