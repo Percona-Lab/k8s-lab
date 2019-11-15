@@ -1,4 +1,4 @@
-# Backup steaming to S3 Compatible Storage
+# S3 streaming tools comparison
 
 Making backups over the network can be done in two ways: either save on disk and transfer or just transfer without saving.
 Both ways have their strong and weak points. Particularly, the second way is highly dependent on the upload speed, which would either reduce or increase the backup time. Other factors that influence it are chunk size and amount of upload threads.
@@ -59,7 +59,7 @@ Small tip: Cloud provider can block your account due to many reasons, like human
 Percona XtraBackup is 2-5 times faster when default realizations with tuned settings on long distance, and 14% faster and requires 20% less memory than analogs with the same settings.
 Percona XtraBackup is the most reliable tool for transfer backups because of two reasons:
 
-* it calculate md5 sum on fly and put it into `.md5/filename.md5` file (gof3r does the same)
+* it calculate md5 sum on fly and put it into `.md5/filename.md5` file and verify sums on recovery (gof3r does the same)
 * xbcloud send data in 10mb chunks and resend them if any network failure happens.
 
 PS: Please find [instructions on GitHub](https://github.com/Percona-Lab/k8s-lab/tree/master/pxb-s3) if you like to reproduce this article results.
