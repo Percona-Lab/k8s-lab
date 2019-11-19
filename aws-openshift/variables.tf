@@ -8,3 +8,12 @@ variable "region" {
 variable "public_key_path" {
   default = "~/.ssh/id_rsa_percona.pub"
 }
+
+variable "rhel_password" {
+  default = "XXX"
+}
+
+variable "rhel_user" {
+  default = "XXX"
+}
+

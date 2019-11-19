@@ -20,6 +20,7 @@ openshift:
 	# Now the installer is done, run the postinstall steps on each host.
 	# Note: these scripts cause a restart, so we use a hyphen to ignore the ssh
 	# connection termination.
+	ssh -A ec2-user@$$(terraform output bastion-public_ip) "ssh-keyscan -t rsa -H master.openshift.local >> ~/.ssh/known_hosts"
 	- cat ./scripts/postinstall-master.sh | ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh master.openshift.local
 	- cat ./scripts/postinstall-node.sh | ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh node1.openshift.local
 	- cat ./scripts/postinstall-node.sh | ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh node2.openshift.local
@@ -28,6 +29,10 @@ openshift:
 
 # Destroy the infrastructure.
 destroy:
+	- echo "subscription-manager unregister" | ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh master.openshift.local
+	- echo "subscription-manager unregister" | ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh node1.openshift.local
+	- echo "subscription-manager unregister" | ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh node2.openshift.local
+	- echo "subscription-manager unregister" | ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh node3.openshift.local
 	terraform init && terraform destroy -auto-approve
 
 # Open the console.

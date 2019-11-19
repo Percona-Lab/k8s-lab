@@ -9,6 +9,8 @@ data "template_file" "setup-master" {
   template = "${file("${path.module}/files/setup-master.sh")}"
   vars {
     availability_zone = "${data.aws_availability_zones.azs.names[0]}"
+    rhel_user = "${var.rhel_user}"
+    rhel_password = "${var.rhel_password}"
   }
 }
 
@@ -62,6 +64,8 @@ data "template_file" "setup-node" {
   template = "${file("${path.module}/files/setup-node.sh")}"
   vars {
     availability_zone = "${data.aws_availability_zones.azs.names[0]}"
+    rhel_user = "${var.rhel_user}"
+    rhel_password = "${var.rhel_password}"
   }
 }
 

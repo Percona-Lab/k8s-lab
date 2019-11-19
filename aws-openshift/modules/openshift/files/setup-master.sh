@@ -45,7 +45,7 @@ chkconfig awslogs on
 # See: https://docs.openshift.org/latest/install_config/install/host_preparation.html
 
 # Install packages required to setup OpenShift.
-subscription-manager register --username XXX --password XXX --auto-attach
+subscription-manager register --username ${rhel_user} --password ${rhel_password} --auto-attach
 subscription-manager repos --enable rhel-7-server-extras-rpms
 yum install -y wget git net-tools bind-utils iptables-services bridge-utils bash-completion skopeo httpd-tools
 yum update -y

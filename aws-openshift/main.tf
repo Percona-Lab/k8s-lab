@@ -25,6 +25,8 @@ module "openshift" {
   public_key_path = "${var.public_key_path}"
   cluster_name    = "openshift-cluster"
   cluster_id      = "openshift-cluster-${var.region}"
+  rhel_password   = "${var.rhel_password}"
+  rhel_user       = "${var.rhel_user}"
 }
 
 //  Output some useful variables for quick SSH access etc.
