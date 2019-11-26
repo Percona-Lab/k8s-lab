@@ -1,6 +1,6 @@
 infrastructure:
 	# Get the modules, create the infrastructure.
-	terraform init && terraform get && terraform apply -auto-approve
+	terraform init && terraform get && terraform apply -var 'public_key_path=$(AWS_NODES_KEY_PUB)' -var 'rhel_password=$(RHEL_PASSWORD)' -var 'rhel_user=$(RHEL_USER)' -auto-approve
 
 # Installs OpenShift on the cluster.
 openshift:
@@ -29,7 +29,18 @@ openshift:
 
 # Destroy the infrastructure.
 destroy:
-	terraform init && terraform destroy -auto-approve
+	ssh-keyscan -t rsa -H $$(terraform output bastion-public_ip) >> ~/.ssh/known_hosts
+	ssh -A ec2-user@$$(terraform output bastion-public_ip) "ssh-keyscan -t rsa -H master.openshift.local >> ~/.ssh/known_hosts"
+	ssh -A ec2-user@$$(terraform output bastion-public_ip) "ssh-keyscan -t rsa -H node1.openshift.local >> ~/.ssh/known_hosts"
+	ssh -A ec2-user@$$(terraform output bastion-public_ip) "ssh-keyscan -t rsa -H node2.openshift.local >> ~/.ssh/known_hosts"
+	ssh -A ec2-user@$$(terraform output bastion-public_ip) "ssh-keyscan -t rsa -H node3.openshift.local >> ~/.ssh/known_hosts"
+	ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh master.openshift.local "sudo  subscription-manager unregister"
+	ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh node1.openshift.local "sudo  subscription-manager unregister"
+	ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh node2.openshift.local "sudo subscription-manager unregister"
+	ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh node3.openshift.local "sudo subscription-manager unregister"
+
+	terraform init
+	terraform destroy -var 'public_key_path=$(AWS_NODES_KEY_PUB)'  -auto-approve
 
 # Open the console.
 browse-openshift:
