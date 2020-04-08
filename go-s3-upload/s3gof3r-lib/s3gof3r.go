@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"runtime"
 
 	"github.com/rlmcpherson/s3gof3r"
 )
@@ -17,7 +18,7 @@ func main() {
 	bucket := os.Args[4]
 	dest := "stream"
 	partSize := 10 * 1024 * 1024
-	threads := 16
+	threads := runtime.NumCPU()
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println("Starting upload")
 
