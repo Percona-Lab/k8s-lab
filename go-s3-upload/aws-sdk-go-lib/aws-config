@@ -1,0 +1,4 @@
+[default]
+s3 =
+  max_concurrent_requests = 10
+  multipart_chunksize = 10MB
