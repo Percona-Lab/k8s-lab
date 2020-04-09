@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"runtime"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -17,13 +18,12 @@ func main() {
 	accessKey := os.Args[2]
 	secretKey := os.Args[3]
 	bucket := os.Args[4]
-	dest := "stream"
-	// partSize is set via AWS_CONFIG_FILE=./aws-config
-	// threads is set via AWS_CONFIG_FILE=./aws-config
+	dest := os.Args[5]
+	partSize := 10 * 1024 * 1024
+	threads := runtime.NumCPU()
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println("Starting upload")
 
-	os.Setenv("AWS_CONFIG_FILE", "./aws-config")
 	s, err := session.NewSession(&aws.Config{
 		Endpoint:    aws.String(endpoint),
 		Region:      aws.String("us-east-1"),
@@ -34,7 +34,10 @@ func main() {
 		return
 	}
 
-	uploader := s3manager.NewUploader(s)
+	uploader := s3manager.NewUploader(s, func(u *s3manager.Uploader) {
+		u.Concurrency = int(threads)
+		u.PartSize = int64(partSize)
+	})
 	r, err := uploader.Upload(&s3manager.UploadInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(dest),
