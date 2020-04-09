@@ -17,8 +17,8 @@ func main() {
 	secretKey := os.Args[3]
 	bucket := os.Args[4]
 	dest := os.Args[5]
-	partSize := 10 * 1024 * 1024
-	threads := runtime.NumCPU()
+	partSize := 128 * 1024 * 1024
+	threads := int(float64(runtime.NumCPU()) * 1.5)
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println("Starting upload")
 
