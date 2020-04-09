@@ -15,7 +15,7 @@ func main() {
 	accessKey := os.Args[2]
 	secretKey := os.Args[3]
 	bucket := os.Args[4]
-	dest := "stream"
+	dest := os.Args[5]
 	partSize := 10 * 1024 * 1024
 	threads := runtime.NumCPU()
 	reader := bufio.NewReader(os.Stdin)
