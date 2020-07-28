@@ -26,8 +26,20 @@ openshift:
 	- cat ./scripts/postinstall-node.sh | ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh node3.openshift.local
 	echo "Complete! Wait a minute for hosts to restart, then run 'make browse-openshift' to login."
 
+# Unregister RHEL subscription
+unregister-rhel-subscription:
+	ssh-keyscan -t rsa -H $$(terraform output bastion-public_ip) >> ~/.ssh/known_hosts
+	ssh -A ec2-user@$$(terraform output bastion-public_ip) "ssh-keyscan -t rsa -H master.openshift.local >> ~/.ssh/known_hosts"
+	ssh -A ec2-user@$$(terraform output bastion-public_ip) "ssh-keyscan -t rsa -H node1.openshift.local >> ~/.ssh/known_hosts"
+	ssh -A ec2-user@$$(terraform output bastion-public_ip) "ssh-keyscan -t rsa -H node2.openshift.local >> ~/.ssh/known_hosts"
+	ssh -A ec2-user@$$(terraform output bastion-public_ip) "ssh-keyscan -t rsa -H node3.openshift.local >> ~/.ssh/known_hosts"
+	ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh master.openshift.local "sudo subscription-manager unregister"
+	ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh node1.openshift.local  "sudo subscription-manager unregister"
+	ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh node2.openshift.local  "sudo subscription-manager unregister"
+	ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh node3.openshift.local  "sudo subscription-manager unregister"
+
 # Destroy the infrastructure.
-destroy:
+destroy: unregister-rhel-subscription
 	terraform init && terraform destroy -auto-approve
 
 # Open the console.
