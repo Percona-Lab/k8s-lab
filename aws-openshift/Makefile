@@ -33,10 +33,10 @@ unregister-rhel-subscription:
 	ssh -A ec2-user@$$(terraform output bastion-public_ip) "ssh-keyscan -t rsa -H node1.openshift.local >> ~/.ssh/known_hosts"
 	ssh -A ec2-user@$$(terraform output bastion-public_ip) "ssh-keyscan -t rsa -H node2.openshift.local >> ~/.ssh/known_hosts"
 	ssh -A ec2-user@$$(terraform output bastion-public_ip) "ssh-keyscan -t rsa -H node3.openshift.local >> ~/.ssh/known_hosts"
-	ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh master.openshift.local "sudo subscription-manager unregister"
-	ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh node1.openshift.local  "sudo subscription-manager unregister"
-	ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh node2.openshift.local  "sudo subscription-manager unregister"
-	ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh node3.openshift.local  "sudo subscription-manager unregister"
+	ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh master.openshift.local "sudo subscription-manager unregister || :"
+	ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh node1.openshift.local  "sudo subscription-manager unregister || :"
+	ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh node2.openshift.local  "sudo subscription-manager unregister || :"
+	ssh -A ec2-user@$$(terraform output bastion-public_ip) ssh node3.openshift.local  "sudo subscription-manager unregister || :"
 
 # Destroy the infrastructure.
 destroy: unregister-rhel-subscription
